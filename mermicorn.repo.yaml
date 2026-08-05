@@ -1,0 +1,34 @@
+schema_version: "1.0"
+
+id: cherry-chance-game-lab
+display_name: Cherry Chance Game Lab
+owner: cherry
+lane: gaming
+visibility: public
+status: foundation
+
+purpose:
+  problem: Produce responsible chance-game research, UX analysis, and education without promoting harm.
+  audience:
+    - Cherry
+    - gaming content / QA / UX roles
+    - portfolio reviewers
+
+shared_services:
+  boot: mermicorn-mega-boot
+  memory: mermicorn-memory
+  token_efficiency: mermicorn-token-saver
+  graphics: mermicorn-graphic-ai
+
+privacy:
+  public:
+    - reviews
+    - explainers
+    - templates
+  private:
+    - actual_spending
+    - session_data
+
+first_proof:
+  artifact: slot-game-ux-mechanics-review
+  status: planned
