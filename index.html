@@ -3,153 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cherry Chance Game Lab</title>
-    <meta name="description" content="Slots and games-of-chance research lab — responsible UX, volatility, session tools">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>Cherry Chance Game Lab — Casino Mechanics & Slot Analysis</title>
+    <meta name="description" content="AI-powered casino game analysis, slot mechanics review, and responsible gaming tools.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #E74C3C;
-            --bg: #0a0a0f;
-            --surface: #12121a;
-            --card: #1a1a2e;
-            --muted: #8B8B9E;
-            --white: #fff;
+            --bg: #050508; --card: rgba(15, 15, 22, 0.7); --card-border: rgba(255,255,255,0.06);
+            --text: #f0f0f5; --muted: #6b6b80;
+            --red: #ef4444; --red-dim: rgba(239,68,68,0.1);
+            --amber: #f59e0b; --emerald: #10b981;
+            --gradient: linear-gradient(135deg, #ef4444, #f59e0b);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--white); line-height: 1.6; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(239,68,68,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(239,68,68,0.03) 1px, transparent 1px); background-size: 60px 60px; z-index: -2; }
+        .bg-glow { position: fixed; width: 500px; height: 500px; border-radius: 50%; filter: blur(150px); opacity: 0.1; z-index: -1; animation: float 20s ease-in-out infinite; }
+        .bg-glow-1 { top: -150px; left: -100px; background: var(--red); }
+        .bg-glow-2 { bottom: -150px; right: -100px; background: var(--amber); animation-delay: -10s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(40px, 40px); } }
 
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: 1rem 2rem;
-            background: rgba(10,10,15,0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { font-weight: 900; font-size: 1.25rem; }
-        .nav-right { color: var(--muted); font-size: 0.8rem; }
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(20px); background: rgba(5,5,8,0.85); border-bottom: 1px solid var(--card-border); z-index: 100; }
+        .logo { font-family: 'Space Grotesk'; font-size: 1.3rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 28px; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--red); }
 
-        .hero {
-            min-height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            padding: 6rem 2rem; position: relative;
-        }
-        .hero::before {
-            content: ''; position: absolute; width: 500px; height: 500px;
-            background: radial-gradient(circle, #E74C3C22, transparent 70%);
-            top: -150px; right: -150px; pointer-events: none;
-        }
-        .badge {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.5rem 1rem; background: #E74C3C15; border: 1px solid #E74C3C33;
-            border-radius: 999px; font-size: 0.75rem; color: #E74C3C; margin-bottom: 1.5rem;
-        }
-        .hero h1 { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 900; line-height: 1; letter-spacing: -0.04em; margin-bottom: 1rem; }
-        .hero h1 span { color: #E74C3C; }
-        .hero p { color: var(--muted); font-size: 1.125rem; max-width: 500px; margin-bottom: 2rem; }
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 80px; }
+        .hero-content { max-width: 850px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--card); border: 1px solid var(--card-border); border-radius: 100px; font-size: 0.85rem; color: var(--red); margin-bottom: 32px; }
+        .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .hero h1 { font-family: 'Space Grotesk'; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; margin-bottom: 24px; }
+        .hero h1 span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.15rem; color: var(--muted); max-width: 600px; margin: 0 auto 40px; }
+        .btn-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s; }
+        .btn-primary { background: var(--gradient); color: #fff; box-shadow: 0 4px 20px rgba(239,68,68,0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(239,68,68,0.4); }
+        .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--card-border); }
+        .btn-secondary:hover { border-color: var(--red); }
 
-        .btn { padding: 1rem 2rem; border-radius: 999px; font-weight: 600; font-size: 0.875rem; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s; display: inline-block; }
-        .btn-primary { background: #E74C3C; color: #0a0a0f; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px #E74C3C44; }
-        .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--white); }
-        .btn-ghost:hover { border-color: #E74C3C; color: #E74C3C; }
+        .stats-section { max-width: 1200px; margin: 0 auto; padding: 0 20px 80px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .stat-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; padding: 28px; text-align: center; transition: all 0.3s; }
+        .stat-card:hover { border-color: var(--red); transform: translateY(-4px); }
+        .stat-number { font-family: 'Space Grotesk'; font-size: 2.5rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { color: var(--muted); font-size: 0.85rem; margin-top: 8px; }
 
-        .section { padding: 6rem 2rem; }
-        .section-header { text-align: center; margin-bottom: 4rem; }
-        .section-header h2 { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
-        .section-header p { color: var(--muted); }
+        section { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-family: 'Space Grotesk'; font-size: 2.2rem; font-weight: 700; margin-bottom: 12px; }
+        .section-header p { color: var(--muted); max-width: 550px; margin: 0 auto; }
 
-        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
-        .feature {
-            background: var(--card); padding: 2rem; border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.06); text-align: center;
-            transition: all 0.3s;
-        }
-        .feature:hover { border-color: #E74C3C44; transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
-        .feature h3 { font-size: 1.125rem; margin-bottom: 0.5rem; }
-        .feature p { color: var(--muted); font-size: 0.875rem; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .feature-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 20px; padding: 32px; transition: all 0.3s; }
+        .feature-card:hover { border-color: var(--red); transform: translateY(-4px); }
+        .feature-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: 20px; }
+        .feature-card h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; }
+        .feature-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
 
-        .items { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
-        .item {
-            background: var(--card); padding: 1.5rem; border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.06);
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s;
-        }
-        .item:hover { border-color: #E74C3C44; transform: translateY(-2px); }
-        .item-name { font-weight: 600; margin-bottom: 0.25rem; }
-        .item-meta { color: var(--muted); font-size: 0.875rem; }
-        .item-price { font-weight: 700; color: #E74C3C; font-size: 1.125rem; }
-        .tag { padding: 0.25rem 0.5rem; background: #E74C3C18; border-radius: 4px; font-size: 0.65rem; color: #E74C3C; margin-left: 0.5rem; font-weight: 600; letter-spacing: 0.05em; }
+        .slot-demo { background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; padding: 48px; margin: 60px auto; max-width: 900px; text-align: center; }
+        .slot-machine { display: flex; gap: 16px; justify-content: center; margin: 32px 0; }
+        .slot-reel { width: 100px; height: 120px; background: rgba(0,0,0,0.4); border: 2px solid var(--card-border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .slot-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+        .slot-stat { text-align: center; }
+        .slot-stat-value { font-family: 'Space Grotesk'; font-size: 1.5rem; font-weight: 700; }
+        .slot-stat-label { font-size: 0.85rem; color: var(--muted); }
 
-        .stats { display: flex; justify-content: center; gap: 4rem; padding: 3rem 2rem; max-width: 800px; margin: 0 auto; }
-        .stat { text-align: center; }
-        .stat-value { font-size: 2rem; font-weight: 900; color: #E74C3C; }
-        .stat-label { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+        .responsible { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.1)); border: 1px solid rgba(16,185,129,0.2); border-radius: 20px; padding: 40px; margin: 60px auto; max-width: 800px; text-align: center; }
+        .responsible h3 { font-family: 'Space Grotesk'; font-size: 1.3rem; margin-bottom: 12px; color: var(--emerald); }
+        .responsible p { color: var(--muted); margin-bottom: 16px; }
+        .responsible a { color: var(--emerald); text-decoration: underline; }
 
-        footer { padding: 4rem 2rem; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; }
-        footer p { color: var(--muted); font-size: 0.875rem; }
-        footer .brand { color: #E74C3C; font-weight: 700; }
+        .pricing-section { background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; padding: 60px; margin: 80px auto; max-width: 1100px; text-align: center; }
+        .pricing-section h2 { font-family: 'Space Grotesk'; font-size: 2rem; margin-bottom: 12px; }
+        .pricing-section > p { color: var(--muted); max-width: 500px; margin: 0 auto 40px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .pricing-card { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 16px; padding: 32px; }
+        .pricing-card.featured { border-color: var(--red); position: relative; }
+        .pricing-card.featured::after { content: 'POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); padding: 4px 16px; background: var(--gradient); border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; }
+        .pricing-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+        .pricing-card .price { font-family: 'Space Grotesk'; font-size: 2.2rem; font-weight: 700; margin: 12px 0; }
+        .pricing-card .price span { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+        .pricing-features { list-style: none; text-align: left; margin: 20px 0; }
+        .pricing-features li { padding: 7px 0; color: var(--muted); font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .pricing-features li::before { content: '✓'; color: var(--red); font-weight: 700; }
 
-        @media (max-width: 768px) {
-            .stats { gap: 2rem; }
-            .features, .items { grid-template-columns: 1fr; }
-        }
+        footer { text-align: center; padding: 40px 20px; border-top: 1px solid var(--card-border); color: var(--muted); font-size: 0.85rem; }
+        footer a { color: var(--red); text-decoration: none; }
+        @media (max-width: 768px) { nav { padding: 16px 20px; } .nav-links { display: none; } .stats-grid, .pricing-grid { grid-template-columns: 1fr; } .slot-info { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
     <nav>
-        <div class="logo">🎰 Cherry Chance Game Lab</div>
-        <div class="nav-right">Built with 💜 by Cherry</div>
+        <div class="logo">🎰 CHANCE LAB</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#demo">Try It</a>
+            <a href="#pricing">Pricing</a>
+            <a href="https://github.com/cyber-lazer-mermicorn/cherry-chance-game-lab" target="_blank">GitHub</a>
+        </div>
     </nav>
 
     <section class="hero">
-        <div class="badge">🎰 Live & Ready</div>
-        <h1><span>Cherry Chance Game Lab</span></h1>
-        <p>Slots and games-of-chance research lab — responsible UX, volatility, session tools</p>
-        <div style="display:flex;gap:1rem;">
-            <a href="#features" class="btn btn-primary">Explore</a>
-            <a href="#items" class="btn btn-ghost">See Latest</a>
+        <div class="hero-content">
+            <div class="hero-badge">🎲 Game Intelligence</div>
+            <h1>Know The <span>Math</span></h1>
+            <p>AI-powered casino game analysis, slot mechanics breakdowns, and responsible gaming tools. Understand the odds before you play.</p>
+            <div class="btn-group">
+                <a href="#demo" class="btn btn-primary">Analyze a Game</a>
+                <a href="#pricing" class="btn btn-secondary">View Plans</a>
+            </div>
         </div>
     </section>
 
-    <section class="section" id="features">
-        <div class="section-header">
-            <h2>Capabilities</h2>
-            <p>Built for performance</p>
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">Games Analyzed</div></div>
+            <div class="stat-card"><div class="stat-number">98%</div><div class="stat-label">Accuracy</div></div>
+            <div class="stat-card"><div class="stat-number">$0</div><div class="stat-label">House Edge Info</div></div>
+            <div class="stat-card"><div class="stat-number">24/7</div><div class="stat-label">Responsible Tools</div></div>
         </div>
-        <div class="features">
-            <div class="feature"><div class="feature-icon">📈</div><h3>Volatility Analysis</h3><p>Slot machine variance and RTP tracking</p></div>
-            <div class="feature"><div class="feature-icon">🎯</div><h3>Session Tools</h3><p>Bankroll management and session planning</p></div>
-            <div class="feature"><div class="feature-icon">📊</div><h3>Game Database</h3><p>Comprehensive slot and table game data</p></div>
-            <div class="feature"><div class="feature-icon">🛡️</div><h3>Responsible Gaming</h3><p>Tools for safe and responsible play</p></div>
+    </div>
+
+    <section id="features">
+        <div class="section-header"><h2>Smart Gaming Tools</h2><p>Make informed decisions at the casino</p></div>
+        <div class="features-grid">
+            <div class="feature-card"><div class="feature-icon" style="background: var(--red-dim);">🎰</div><h3>Slot Analysis</h3><p>Upload slot machine info — get RTP, volatility, hit frequency, and optimal bet sizing. Know exactly what you're playing.</p></div>
+            <div class="feature-card"><div class="feature-icon" style="background: rgba(245,158,11,0.1);">📊</div><h3>House Edge Calculator</h3><p>Instant house edge for any game. Blackjack, roulette, craps, baccarat — see the math behind every bet.</p></div>
+            <div class="feature-card"><div class="feature-icon" style="background: rgba(16,185,129,0.1);">🧠</div><h3>Strategy Optimizer</h3><p>AI-powered optimal strategy for skill games. Blackjack basic strategy, video poker draws, and poker hand rankings.</p></div>
+            <div class="feature-card"><div class="feature-icon" style="background: rgba(59,130,246,0.1);">📈</div><h3>Variance Simulator</h3><p>Monte Carlo simulations for any game. See expected outcomes over 1000+ sessions. Understand variance vs. edge.</p></div>
+            <div class="feature-card"><div class="feature-icon" style="background: rgba(139,92,246,0.1);">🎁</div><h3>Bonus Analyzer</h3><p>Evaluate casino bonuses. True value, wagering requirements, expected loss, and whether it's worth claiming.</p></div>
+            <div class="feature-card"><div class="feature-icon" style="background: rgba(236,72,153,0.1);">🔒</div><h3>Bankroll Manager</h3><p>Set limits, track sessions, get alerts. Smart bankroll management to extend play time and reduce risk.</p></div>
         </div>
     </section>
 
-    <section class="section" id="items">
-        <div class="section-header">
-            <h2>Latest Activity</h2>
-            <p>Recent results</p>
-        </div>
-        <div class="items">
-            <div class="item"><div><div class="item-name">Starburst<span class="tag">POPULAR</span></div><div class="item-meta">Low Vol</div></div><div class="item-price">96.1% RTP</div></div>
-            <div class="item"><div><div class="item-name">Gonzo's Quest<span class="tag">FEATURED</span></div><div class="item-meta">Med Vol</div></div><div class="item-price">95.97% RTP</div></div>
-            <div class="item"><div><div class="item-name">Book of Dead<span class="tag">VOLATILE</span></div><div class="item-meta">High Vol</div></div><div class="item-price">96.21% RTP</div></div>
+    <section id="demo">
+        <div class="slot-demo">
+            <h2 style="font-family: 'Space Grotesk'; margin-bottom: 16px;">Try Slot Analysis</h2>
+            <p style="color: var(--muted); margin-bottom: 32px;">Enter a slot name to see its math profile</p>
+            <div class="slot-machine">
+                <div class="slot-reel">🍒</div>
+                <div class="slot-reel">7️⃣</div>
+                <div class="slot-reel">💎</div>
+            </div>
+            <div style="margin: 24px 0;">
+                <input type="text" placeholder="Enter slot name (e.g. Buffalo Gold)" style="width: 100%; max-width: 400px; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; color: var(--text); font-size: 1rem; text-align: center;">
+            </div>
+            <div class="slot-info">
+                <div class="slot-stat"><div class="slot-stat-value" style="color: var(--emerald);">96.2%</div><div class="slot-stat-label">RTP (Return to Player)</div></div>
+                <div class="slot-stat"><div class="slot-stat-value" style="color: var(--amber);">MEDIUM</div><div class="slot-stat-label">Volatility</div></div>
+                <div class="slot-stat"><div class="slot-stat-value" style="color: var(--red);">3.8%</div><div class="slot-stat-label">House Edge</div></div>
+            </div>
         </div>
     </section>
 
-    <section class="section">
-        <div class="stats">
-            <div class="stat"><div class="stat-value">4</div><div class="stat-label">Capabilities</div></div>
-            <div class="stat"><div class="stat-value">3</div><div class="stat-label">Items Tracked</div></div>
-            <div class="stat"><div class="stat-value">99%</div><div class="stat-label">Uptime</div></div>
+    <div class="responsible">
+        <h3>🛡️ Play Responsibly</h3>
+        <p> gambling should be entertainment, not income. Set limits, know the odds, and never bet more than you can afford to lose.</p>
+        <p>If you or someone you know has a gambling problem, call <a href="https://www.ncpgambling.org">1-800-522-4700</a> for help.</p>
+    </div>
+
+    <section id="pricing" class="pricing-section">
+        <h2>Simple Pricing</h2>
+        <p>Knowledge is the best bet you can make</p>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Free</h3><p style="color: var(--muted); font-size: 0.85rem;">For casual players</p>
+                <div class="price">$0<span>/mo</span></div>
+                <ul class="pricing-features"><li>5 game analyses</li><li>Basic RTP info</li><li>House edge calculator</li><li>Community access</li></ul>
+                <a href="#demo" class="btn btn-secondary" style="width: 100%; text-align: center;">Get Started</a>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Pro</h3><p style="color: var(--muted); font-size: 0.85rem;">For serious players</p>
+                <div class="price">$14<span>/mo</span></div>
+                <ul class="pricing-features"><li>Unlimited analyses</li><li>Detailed math breakdown</li><li>Strategy optimizer</li><li>Variance simulator</li><li>Bonus analyzer</li><li>Bankroll manager</li></ul>
+                <a href="#demo" class="btn btn-primary" style="width: 100%; text-align: center;">Start Pro Trial</a>
+            </div>
+            <div class="pricing-card">
+                <h3>Affiliate</h3><p style="color: var(--muted); font-size: 0.85rem;">For content creators</p>
+                <div class="price">$49<span>/mo</span></div>
+                <ul class="pricing-features"><li>Everything in Pro</li><li>White-label reports</li><li>Affiliate tracking</li><li>Custom branding</li><li>API access</li><li>Revenue share</li></ul>
+                <a href="#demo" class="btn btn-secondary" style="width: 100%; text-align: center;">Apply Now</a>
+            </div>
         </div>
     </section>
 
     <footer>
-        <p>© 2026 <span class="brand">Cherry Chance Game Lab</span>. All rights reserved.</p>
+        <p>© 2026 Cherry Chance Game Lab. All rights reserved.</p>
+        <p style="margin-top: 8px;">Built with <a href="https://vercel.com">Vercel</a> • Part of <a href="https://lazermermicorn.com">lazermermicorn.com</a></p>
     </footer>
 </body>
 </html>
